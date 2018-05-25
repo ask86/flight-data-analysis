@@ -1,0 +1,55 @@
+package mypackage2;
+
+import java.io.IOException;
+//import java.util.StringTokenizer;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+//import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+
+
+public  class pb_mapper extends Mapper<LongWritable, Text, Text, DoubleWritable>
+{
+private final static DoubleWritable one = new DoubleWritable(1);
+private Text word = new Text();
+private final static DoubleWritable two = new DoubleWritable(2);
+//String  word;
+public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
+{
+int i=0;
+String line = value.toString();
+String [] delay=line.split(",");
+
+if(delay[14].equals("ArrDelay"))
+			{
+				i=1;
+			}
+else if (delay[15].equals("DepDelay"))
+{
+	i=1;
+}
+else if (delay[14].equals("NA")||delay[15].equals("NA"))
+{
+	i=1;
+	context.write(word,two);
+	
+}
+	
+else if(((Integer.parseInt(delay[14])+Integer.parseInt(delay[15]))>10) ||(Integer.parseInt(delay[14])+Integer.parseInt(delay[15]))<(-10)) {
+
+	word= new Text(delay[8]);
+		
+	
+	context.write(word,one);
+	
+}
+
+}
+}
